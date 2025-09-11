@@ -50,7 +50,7 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          End-to-End HR Outsourcing, Recruitment, and Transformation – Powered by Technology, Backed by 24 Years of Experience.
+          End-to-End HR Outsourcing, Recruitment, and Transformation – Powered by Technology, Backed by 20s Years of Experience.
         </motion.p>
         
         <motion.div 
