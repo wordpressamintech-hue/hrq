@@ -9,8 +9,8 @@ export function USPHighlights() {
     },
     {
       icon: Shield,
-      title: "ISO-Ready Processes",
-      description: "Compliance-first HR solutions (ISO 30414 / ISO 9001)."
+      title: "Compliance-Ready Processes",
+      description: "Certified HR solutions ensuring regulatory compliance (ISO 9001)."
     },
     {
       icon: Cog,

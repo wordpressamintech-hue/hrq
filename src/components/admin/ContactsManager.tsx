@@ -4,7 +4,6 @@ import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { useAuth } from '../../hooks/useAuth';
-import { projectId, publicAnonKey } from '../../utils/supabase/info';
 import { Search, Mail, Phone, Building, Clock, User, MessageSquare, Briefcase, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -35,10 +34,13 @@ export function ContactsManager() {
 
   const fetchContacts = async () => {
     try {
-      // Check if using fallback authentication
-      if (token?.startsWith('fallback-')) {
-        console.log('Using fallback data for contacts');
-        // Mock data for fallback authentication
+      // Load contacts from localStorage for fallback
+      console.log('Loading contacts from localStorage');
+      const storedContacts = localStorage.getItem('contact_submissions');
+      const localContacts = storedContacts ? JSON.parse(storedContacts) : [];
+
+      // Add mock data if no local data exists
+      if (localContacts.length === 0) {
         const mockContacts: Contact[] = [
           {
             id: 'contact_1',
@@ -66,27 +68,24 @@ export function ContactsManager() {
           }
         ];
         setContacts(mockContacts);
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server/admin/contacts`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setContacts(data.contacts || []);
       } else {
-        console.error('Failed to fetch contacts');
-        // Show empty state if API fails
-        setContacts([]);
+        // Convert localStorage format to Contact format
+        const formattedContacts = localContacts.map((contact: any, index: number) => ({
+          id: `contact_${index + 3}`,
+          name: contact.name || 'Unknown',
+          email: contact.email || '',
+          company: contact.company || '',
+          phone: contact.phone || '',
+          industry: contact.industry || '',
+          service: Array.isArray(contact.services) ? contact.services.join(', ') : (contact.service || ''),
+          message: contact.message || '',
+          status: 'new' as const,
+          createdAt: contact.timestamp || new Date().toISOString(),
+        }));
+        setContacts(formattedContacts);
       }
     } catch (error) {
-      console.error('Error fetching contacts:', error);
-      // Show empty state if network fails
+      console.error('Error loading contacts:', error);
       setContacts([]);
     } finally {
       setLoading(false);
@@ -95,35 +94,12 @@ export function ContactsManager() {
 
   const updateContactStatus = async (contactId: string, status: Contact['status']) => {
     try {
-      // Handle fallback authentication
-      if (token?.startsWith('fallback-')) {
-        console.log('Updating contact status (fallback mode)');
-        const updatedContact = { ...selectedContact!, status, updatedAt: new Date().toISOString() };
-        setContacts(prev => prev.map(contact => 
-          contact.id === contactId ? updatedContact : contact
-        ));
-        setSelectedContact(updatedContact);
-        return;
-      }
-
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server/admin/contacts/${contactId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setContacts(prev => prev.map(contact => 
-          contact.id === contactId ? data.contact : contact
-        ));
-        if (selectedContact?.id === contactId) {
-          setSelectedContact(data.contact);
-        }
-      }
+      console.log('Updating contact status locally');
+      const updatedContact = { ...selectedContact!, status, updatedAt: new Date().toISOString() };
+      setContacts(prev => prev.map(contact => 
+        contact.id === contactId ? updatedContact : contact
+      ));
+      setSelectedContact(updatedContact);
     } catch (error) {
       console.error('Error updating contact status:', error);
     }

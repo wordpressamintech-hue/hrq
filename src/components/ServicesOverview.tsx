@@ -6,7 +6,9 @@ import {
   UserCheck, 
   FileCheck, 
   TrendingUp, 
-  GraduationCap 
+  GraduationCap,
+  BarChart3,
+  FileText
 } from "lucide-react";
 import { useRouter } from "./Router";
 
@@ -16,7 +18,7 @@ export function ServicesOverview() {
   const services = [
     {
       icon: Settings,
-      title: "HR Function Setup & Outsourcing",
+      title: "HR Function Startup & Outsourcing",
       description: "Complete HR infrastructure development and ongoing management for growing businesses."
     },
     {
@@ -31,8 +33,13 @@ export function ServicesOverview() {
     },
     {
       icon: FileCheck,
-      title: "HR Compliance & Audit Readiness",
+      title: "HR Compliance & HR Audit Readiness",
       description: "Ensure regulatory compliance and prepare for audits with confidence."
+    },
+    {
+      icon: BarChart3,
+      title: "Headcount Budgeting & Org. Chart",
+      description: "Strategic workforce planning and organizational structure development."
     },
     {
       icon: TrendingUp,
@@ -56,7 +63,7 @@ export function ServicesOverview() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
           {services.map((service, index) => (
             <Card key={index} className="group hover:shadow-lg transition-shadow border-0 shadow-md bg-white">
               <CardHeader className="text-center pb-4">

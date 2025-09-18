@@ -110,7 +110,14 @@ export function Footer() {
                   Insights
                 </button>
               </li>
-             
+              <li>
+                <button
+                  onClick={() => navigate("careers")}
+                  className="text-white/80 hover:text-white transition-colors text-left"
+                >
+                  Careers
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -207,19 +214,19 @@ export function Footer() {
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <button
-              onClick={() => navigate("privacy-policy")}
+              onClick={() => navigate("privacy")}
               className="text-white/80 hover:text-white text-sm transition-colors"
             >
               Privacy Policy
             </button>
             <button
-              onClick={() => navigate("terms-of-service")}
+              onClick={() => navigate("terms")}
               className="text-white/80 hover:text-white text-sm transition-colors"
             >
               Terms of Service
             </button>
             <button
-              onClick={() => navigate("cookie-policy")}
+              onClick={() => navigate("cookies")}
               className="text-white/80 hover:text-white text-sm transition-colors"
             >
               Cookie Policy

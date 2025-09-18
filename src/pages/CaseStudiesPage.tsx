@@ -30,11 +30,11 @@ export function CaseStudiesPage() {
     },
     {
       id: 2,
-      title: "Global FMCG Company Achieves ISO Compliance Across 12 Countries",
+      title: "Global FMCG Company Achieves Compliance Standards Across 12 Countries",
       industry: "FMCG",
       service: "HR Compliance",
       client: "GlobalConsumer Corp",
-      challenge: "A multinational FMCG company needed to standardize HR processes and achieve ISO 30414 compliance across diverse markets with varying regulatory requirements.",
+      challenge: "A multinational FMCG company needed to standardize HR processes and achieve compliance across diverse markets with varying regulatory requirements.",
       solution: "Developed standardized HR policies adapted for local regulations, implemented compliance monitoring systems, and conducted comprehensive audit preparation.",
       results: [
         { metric: "Countries Certified", value: "12", icon: Target },

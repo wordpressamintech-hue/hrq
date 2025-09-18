@@ -107,14 +107,14 @@ export function AboutPage() {
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
             <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-              Founded in 2025, Human Resource Quantum (HRQ) emerged from a simple yet powerful vision: 
+              Human Resource Quantum (HRQ) emerged from a simple yet powerful vision: 
               to transform HR from an administrative burden into a strategic catalyst for business growth. 
               What started as a boutique HR consulting firm has evolved into a global leader in HR outsourcing, 
               recruitment, and transformation services.
             </p>
             <p className="text-lg text-gray-700 leading-relaxed">
               Today, we serve clients across four continents, combining deep industry expertise with 
-              cutting-edge technology to deliver measurable results. Our ISO-certified processes and 
+              cutting-edge technology to deliver measurable results. Our certified processes and 
               technology-enabled solutions help organizations build agile, compliant, and future-ready HR functions.
             </p>
           </div>

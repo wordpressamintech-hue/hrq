@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { MapPin, Clock, Briefcase, Users, GraduationCap, Upload, X, Send } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { projectId, publicAnonKey } from '../utils/supabase/info';
 
 interface JobApplication {
   firstName: string;
@@ -304,8 +303,8 @@ const mockJobs: Job[] = [
 ];
 
 export function CareerPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs] = useState<Job[]>(mockJobs);
+  const [loading, setLoading] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isApplicationOpen, setIsApplicationOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -321,40 +320,6 @@ export function CareerPage() {
     coverLetter: "",
     cv: null
   });
-
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
-  const fetchJobs = async () => {
-    try {
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server/jobs`, {
-        headers: {
-          'Authorization': `Bearer ${publicAnonKey}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // If no jobs from server, use default mock jobs
-        if (!data.jobs || data.jobs.length === 0) {
-          setJobs(mockJobs);
-        } else {
-          setJobs(data.jobs);
-        }
-      } else {
-        console.log('Server response not ok, falling back to mock jobs. Status:', response.status);
-        // Fallback to mock jobs if server is unavailable
-        setJobs(mockJobs);
-      }
-    } catch (error) {
-      console.log('Error fetching jobs from server, falling back to mock jobs:', error);
-      // Fallback to mock jobs on error
-      setJobs(mockJobs);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (field: keyof JobApplication, value: string) => {
     setApplicationData(prev => ({ ...prev, [field]: value }));
@@ -390,115 +355,51 @@ export function CareerPage() {
     setIsSubmitting(true);
 
     try {
-      // Convert file to base64 for storage (in a real app, you'd use proper file storage)
-      let resumeData = '';
-      if (applicationData.cv) {
-        const reader = new FileReader();
-        resumeData = await new Promise((resolve) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(applicationData.cv!);
-        });
-      }
-
-      console.log('Submitting job application to:', `https://${projectId}.supabase.co/functions/v1/make-server/apply`);
-      
-      const applicationPayload = {
+      // Store application for manual processing since we removed Supabase
+      const applicationRecord = {
+        type: 'job_application',
+        timestamp: new Date().toISOString(),
         jobId: selectedJob?.id,
         jobTitle: applicationData.position,
-        firstName: applicationData.firstName,
-        lastName: applicationData.lastName,
-        email: applicationData.email,
-        phone: applicationData.phone,
-        location: applicationData.availability,
-        experience: applicationData.experience,
-        coverLetter: applicationData.coverLetter,
-        resume: resumeData,
+        data: {
+          firstName: applicationData.firstName,
+          lastName: applicationData.lastName,
+          email: applicationData.email,
+          phone: applicationData.phone,
+          location: applicationData.availability,
+          experience: applicationData.experience,
+          coverLetter: applicationData.coverLetter,
+          hasResume: !!applicationData.cv
+        }
       };
       
-      console.log('Application payload:', applicationPayload);
+      console.log('JOB APPLICATION SUBMISSION:', applicationRecord);
       
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server/apply`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`,
-        },
-        body: JSON.stringify(applicationPayload),
+      // Store in localStorage for manual processing
+      const applications = JSON.parse(localStorage.getItem('job_applications') || '[]');
+      applications.push(applicationRecord);
+      localStorage.setItem('job_applications', JSON.stringify(applications));
+      
+      // Simulate delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast.success("Application submitted successfully! We'll review your application and get back to you soon.");
+      setIsApplicationOpen(false);
+      setApplicationData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        position: "",
+        experience: "",
+        education: "",
+        availability: "",
+        coverLetter: "",
+        cv: null
       });
-
-      console.log('Application response status:', response.status);
-      const data = await response.json();
-      console.log('Application response data:', data);
-
-      if (response.ok && data.success) {
-        toast.success("Application submitted successfully! We'll review your application and get back to you soon.");
-        setIsApplicationOpen(false);
-        setApplicationData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          position: "",
-          experience: "",
-          education: "",
-          availability: "",
-          coverLetter: "",
-          cv: null
-        });
-      } else {
-        throw new Error(data.error || 'Application submission failed');
-      }
     } catch (error) {
       console.error('Application submission error:', error);
-      
-      // Handle network errors with fallback
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        console.log('Network error detected, using fallback handling for job application');
-        
-        // Simulate successful submission for user experience
-        toast.success("Application submitted successfully! We'll review your application and get back to you soon.");
-        setIsApplicationOpen(false);
-        setApplicationData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          position: "",
-          experience: "",
-          education: "",
-          availability: "",
-          coverLetter: "",
-          cv: null
-        });
-        
-        // Log and store application for manual processing
-        const applicationRecord = {
-          type: 'job_application',
-          timestamp: new Date().toISOString(),
-          jobId: selectedJob?.id,
-          jobTitle: applicationData.position,
-          data: {
-            firstName: applicationData.firstName,
-            lastName: applicationData.lastName,
-            email: applicationData.email,
-            phone: applicationData.phone,
-            location: applicationData.availability,
-            experience: applicationData.experience,
-            coverLetter: applicationData.coverLetter,
-            hasResume: !!applicationData.cv
-          }
-        };
-        
-        console.log('JOB APPLICATION SUBMISSION (FALLBACK):', applicationRecord);
-        
-        // Store in localStorage for later sync
-        const applications = JSON.parse(localStorage.getItem('pending_submissions') || '[]');
-        applications.push(applicationRecord);
-        localStorage.setItem('pending_submissions', JSON.stringify(applications));
-        
-      } else {
-        toast.error("Unable to submit application at this time. Please contact us directly at info@hr-q.com");
-      }
+      toast.error("Unable to submit application at this time. Please contact us directly at info@hr-q.com");
     } finally {
       setIsSubmitting(false);
     }

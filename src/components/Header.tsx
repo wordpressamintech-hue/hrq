@@ -14,8 +14,7 @@ export function Header() {
     { id: 'services' as const, label: 'Services' },
     { id: 'industries' as const, label: 'Industries' },
     { id: 'case-studies' as const, label: 'Case Studies' },
-    { id: 'insights' as const, label: 'Insights' },
-    // { id: 'careers' as const, label: 'Careers' }
+    { id: 'insights' as const, label: 'Insights' }
   ];
 
   const handleNavigation = (id: typeof navItems[0]['id']) => {

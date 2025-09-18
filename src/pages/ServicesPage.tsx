@@ -16,6 +16,8 @@ import {
   GraduationCap,
   CheckCircle,
   ArrowRight,
+  BarChart3,
+  FileText,
 } from "lucide-react";
 import { useRouter } from "../components/Router";
 import servicesHeroImage from 'figma:asset/8e1016d8ceaceab993233052beaf6adb0e763eb3.png';
@@ -26,7 +28,7 @@ export function ServicesPage() {
   const services = [
     {
       icon: Settings,
-      title: "HR Function Setup & Outsourcing",
+      title: "HR Function Startup & Outsourcing",
       description:
         "Complete HR infrastructure development and ongoing management for growing businesses.",
       features: [
@@ -44,7 +46,7 @@ export function ServicesPage() {
         "Ongoing support and optimization",
       ],
       benefits: [
-        "Reduced operational costs by up to 40%",
+        "Reduced operational costs",
         "Improved compliance and risk management",
         "Scalable solutions that grow with your business",
       ],
@@ -72,7 +74,7 @@ export function ServicesPage() {
         "Team integration and onboarding facilitation",
       ],
       benefits: [
-        "Average time-to-hire reduced by 50%",
+        "Reduced time-to-hire",
         "Higher quality candidates and retention",
         "Enhanced employer brand reputation",
         "Flexible scaling of team resources",
@@ -99,22 +101,23 @@ export function ServicesPage() {
         "Continuous improvement cycles",
       ],
       benefits: [
-        "90% improvement in new hire satisfaction",
+        "Improved new hire satisfaction",
         "Faster time to productivity",
-        "Reduced early turnover by 35%",
+        "Reduced early turnover",
       ],
     },
     {
       icon: FileCheck,
-      title: "HR Compliance & Audit Readiness",
+      title: "HR Compliance & HR Audit Readiness",
       description:
         "Ensure regulatory compliance and prepare for audits with confidence.",
       features: [
-        "ISO 30414 and ISO 9001 compliance",
+        "Compliance framework implementation",
         "Labor law compliance monitoring",
         "Data privacy and security",
         "Audit preparation and support",
         "Risk assessment and mitigation",
+        "3Ps Contract management and documentation",
       ],
       process: [
         "Compliance gap analysis",
@@ -124,9 +127,34 @@ export function ServicesPage() {
         "Regular compliance monitoring",
       ],
       benefits: [
-        "100% audit success rate",
+        "High audit success rate",
         "Reduced legal and compliance risks",
         "International standard certification",
+      ],
+    },
+    {
+      icon: BarChart3,
+      title: "Headcount Budgeting & Org. Chart",
+      description:
+        "Strategic workforce planning and organizational structure development.",
+      features: [
+        "Workforce planning analysis",
+        "Budget forecasting and modeling",
+        "Organizational structure design",
+        "Role definition and mapping",
+        "Succession planning integration",
+      ],
+      process: [
+        "Current state assessment",
+        "Future workforce requirements analysis",
+        "Budget allocation optimization",
+        "Organizational chart development",
+        "Implementation roadmap creation",
+      ],
+      benefits: [
+        "Optimized workforce costs",
+        "Enhanced organizational clarity",
+        "Strategic resource allocation",
       ],
     },
     {

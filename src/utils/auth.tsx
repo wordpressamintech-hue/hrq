@@ -1,12 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { projectId, publicAnonKey } from './supabase/info';
-
-// Initialize Supabase client
-const supabase = createClient(
-  `https://${projectId}.supabase.co`,
-  publicAnonKey
-);
 
 interface User {
   id: string;
@@ -45,9 +37,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Check for existing session
     const checkSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setUser(session.user as User);
+        const storedUser = localStorage.getItem('auth_user');
+        const storedToken = localStorage.getItem('auth_token');
+        
+        if (storedUser && storedToken) {
+          setUser(JSON.parse(storedUser));
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -57,39 +51,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setUser(session.user as User);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        setUser(data.user as User);
+      // Simple admin authentication
+      const adminEmails = ['info@hr-q.com', 'shahidamin.tcb@gmail.com'];
+      if (adminEmails.includes(email) && password === 'HRQ@Admin2025!') {
+        const authUser = {
+          id: 'user-' + Date.now(),
+          email,
+          user_metadata: { role: 'admin', name: email.split('@')[0] }
+        };
+        
+        setUser(authUser);
+        localStorage.setItem('auth_user', JSON.stringify(authUser));
+        localStorage.setItem('auth_token', 'token-' + Date.now());
+        
         return { success: true };
       }
 
-      return { success: false, error: 'Sign in failed' };
+      return { success: false, error: 'Invalid credentials' };
     } catch (error) {
       return { success: false, error: 'Network error during sign in' };
     }
@@ -97,23 +79,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signUp = async (email: string, password: string, adminKey: string) => {
     try {
-      // Call our backend to create admin user
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-0004e2f8/admin/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`,
-        },
-        body: JSON.stringify({ email, password, adminKey }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        return { success: false, error: result.error || 'Admin signup failed' };
+      // Simplified signup for admin users
+      if (adminKey === 'HRQ@AdminKey2025!') {
+        return { success: true };
       }
-
-      return { success: true };
+      
+      return { success: false, error: 'Invalid admin key' };
     } catch (error) {
       return { success: false, error: 'Network error during admin signup' };
     }
@@ -121,8 +92,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
       setUser(null);
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_token');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -130,8 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getAccessToken = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      return session?.access_token || null;
+      return localStorage.getItem('auth_token');
     } catch (error) {
       console.error('Error getting access token:', error);
       return null;
@@ -152,5 +123,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export { supabase };
